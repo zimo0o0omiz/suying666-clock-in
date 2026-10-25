@@ -35,7 +35,7 @@ def login(host):
         'Sec-Fetch-Mode': 'navigate',
         'Sec-Fetch-User': '?1',
         'Sec-Fetch-Dest': 'document',
-        'Accept-Encoding': 'gzip, deflate, br',
+        'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-CN,zh;q=0.9',
     }
     res = session.get(url=host, headers=headers)
@@ -45,7 +45,7 @@ def login(host):
         time.sleep(5)
         print(cookie)
         n = cookie['ge_ua_p']
-        s = re.search('var nonce = \d+;', res.text)
+        s = re.search(r'var nonce = \d+;', res.text)
         nonce = int(s[0][s[0].rindex('=') + 1:-1])
         print(nonce)
         a = 0
@@ -69,7 +69,7 @@ def login(host):
             'Sec-Fetch-Mode': 'cors',
             'Sec-Fetch-Dest': 'empty',
             'Referer': host + '/',
-            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,zh;q=0.9',
             'Cookie': 'ge_ua_p=' + n,
         }
@@ -136,7 +136,8 @@ def clockIn(host):
     url = '{}/user/checkin'.format(host)
     headers = {
         'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'Accept-Encoding': 'gzip, deflate, br',
+        # 不能声明 br：requests 未装 brotli，收到 brotli 响应无法解压，json() 会失败
+        'Accept-Encoding': 'gzip, deflate',
         'Accept-Language': 'zh-CN,zh;q=0.9',
         'Content-Length': '0',
         'Origin': host,
